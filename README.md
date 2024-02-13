@@ -10,7 +10,7 @@ Copyright: ECE 6780, Kyle G. Gayliyev - This work may not be copied for use in A
 
 ## Overview of the Lab 03
 
-Lab 2 is consisted of 2 Parts:<br>
+Lab 3 is consisted of 2 Parts:<br>
 
 * Part 1: Configuring Pin Alternate Functions
 * Part 2: Measuring PWM Output.
