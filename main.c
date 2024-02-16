@@ -67,7 +67,7 @@ void SystemClock_Config(void);
 	
 	
 	// Helper function for toggle handler:
-void ToggleFunction(void) {
+void ToggleFunction(int button_count) {
  // TIM1_BRK_UP_TRG_COM_IRQHandler();
     if (button_count == 1){
 			
@@ -96,8 +96,19 @@ void ToggleFunction(void) {
 	
 		// Toggle between the green (PC8) and orange (PC9) LEDs in the interrupt handler
 	
-void TIM1_BRK_UP_TRG_COM_IRQHandler(void) {
-//	
+void TIM2_IRQHandler(void) {
+
+		
+       //button_count = 1;
+			 ToggleFunction(1);
+
+    //Don’t forget to clear the pending flag for the update interrupt in the status register:
+	 
+	//	TIM2->SR |= 0x1;  //Bit 0 UIF: Update interrupt flag	 
+	TIM2->SR &= ~TIM_SR_UIF;
+	
+	
+	//	
 //	 timer++;
 //	
 //	//if(timer == 6000){
@@ -123,12 +134,7 @@ void TIM1_BRK_UP_TRG_COM_IRQHandler(void) {
  
 	
 	
-	
-       button_count = 1;
 
-    //Don’t forget to clear the pending flag for the update interrupt in the status register:
-	 
-		TIM1->SR |= 0x1;  //Bit 0 UIF: Update interrupt flag	 
 
 }	
 
@@ -160,8 +166,14 @@ int main(void)
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
 
+	// Exersize 3.1 — Using Timer Interrupts:
+
+
+
 		//Enable the timer 2 peripheral (TIM2) in the RCC
    RCC->APB1ENR |= 0x1;  //Bit 0 TIM2EN: TIM2 timer clock enable
+	
+//	RCC->APB2ENR |=0x800; 
 	 
 	 //Configure the timer to trigger an update event:
 	 //The default processor frequency of the STM32F072 is 8 MHz
@@ -172,24 +184,25 @@ int main(void)
 	 //PSC = fCLK/(ARR * fTARGET) -1.
 	 // fCLK=8MHz; fTARGET = 4Hz. 1/4 =0.25sec=250 ms.
 	 //Set ARR = 250 (only 8 bits); PSC = 8MHz/(250 * 4Hz) -1 =7999 (occupies 13 bit only out of 16 bit).
-		 TIM1->PSC |= 0x1F3F; //7999
-		 TIM1->ARR |= 0xFA;   //250
+		 TIM2->PSC = 7999; //0x1F3F; //7999
+		 TIM2->ARR = 125;//0xFA;   //250
 	 
 	 //Configure the timer to generate an interrupt on the UEV event (Update Event).
 	 //Use the DMA/Interrupt Enable Register (DIER) to enable the Update Interrupt:
-		 TIM1->DIER |= 0x1; //Bit 0 UIE: Update interrupt enable
-	 
+		 TIM2->DIER |= 0x1; //Bit 0 UIE: Update interrupt enable
+		// TIM2->DIER |= TIM_DIER_UIE; //
+	 //egr, rcr, CR1 (have that) feedback
 	 //Configure and enable/start the timer
 	 //Although the RCC enabled the timer’s clock source, 
 	 //the timer has its own enable/start bit in the control registers
 	 
-	   TIM1->CR1 |= 0x1; //Bit 0 CEN: Counter enable
+	   TIM2->CR1 |= 0x1; //Bit 0 CEN: Counter enable
 	 
 	 //Set up the timer’s interrupt handler, and enable in the NVIC.
 	 
-			NVIC_EnableIRQ(TIM1_BRK_UP_TRG_COM_IRQn); // In the stm32f072xb.h file.
+			NVIC_EnableIRQ(TIM2_IRQn); // In the stm32f072xb.h file.
 	 
-	    NVIC_SetPriority(TIM1_BRK_UP_TRG_COM_IRQn,1);// Set the priority for the interrupt to 1 (high-priority). 
+	    NVIC_SetPriority(TIM2_IRQn,1);// Set the priority for the interrupt to 1 (high-priority). 
 		
 	 
 	 // Toggle between the green (PC8) and orange (PC9) LEDs in the interrupt handler
@@ -221,16 +234,22 @@ int main(void)
 		
 		GPIOC->ODR |= 0x100; //Set the orange ON
 	 
+	 // Exersize 3.2 — Configuring Timer Channels to PWM Mode.
 	 
-
-		
+	 //Enable the timer 3 peripheral (TIM3) in the RCC.
+	  RCC->APB1ENR |= 0x2;  //Bit 1 TIM3EN: TIM3 timer clock enable
+	 
+	 //The timer’s update period determines the period of the PWM signal; 
+	 //configure the timer to a UEV period related to 800 Hz (T = 1/f).
+	 // T = 0.00125
+	 
 	
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	int i;
+	// int i;
   while (1)
   {
     /* USER CODE END WHILE */
@@ -241,17 +260,17 @@ int main(void)
 //			
 	//		HAL_Delay(250);
 //			
-      TIM1_BRK_UP_TRG_COM_IRQHandler(); 	
+     // TIM1_BRK_UP_TRG_COM_IRQHandler(); 	
 					
-			for (i = 0; i < 2500000; i++) {
-					// delay of one and half second
-				if(i==2499998) {
-				//
-						ToggleFunction();
-				}
-			}
-		
-		
+//			for (i = 0; i < 2500000; i++) {
+//					// delay of one and half second
+//				if(i==2499998) {
+//				//
+//						ToggleFunction();
+//				}
+//			}
+//		HAL_Delay(350);
+//		ToggleFunction(1);
 	//	TIM1_BRK_UP_TRG_COM_IRQHandler();
 
 //			
