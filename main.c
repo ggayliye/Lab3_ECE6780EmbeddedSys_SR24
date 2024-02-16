@@ -185,7 +185,7 @@ int main(void)
 	 // fCLK=8MHz; fTARGET = 4Hz. 1/4 =0.25sec=250 ms.
 	 //Set ARR = 250 (only 8 bits); PSC = 8MHz/(250 * 4Hz) -1 =7999 (occupies 13 bit only out of 16 bit).
 		 TIM2->PSC = 7999; //0x1F3F; //7999
-		 TIM2->ARR = 125;//0xFA;   //250
+		 TIM2->ARR = 250;//0xFA;   //250
 	 
 	 //Configure the timer to generate an interrupt on the UEV event (Update Event).
 	 //Use the DMA/Interrupt Enable Register (DIER) to enable the Update Interrupt:
