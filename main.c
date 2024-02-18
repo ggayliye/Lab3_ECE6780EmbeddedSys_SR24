@@ -166,9 +166,10 @@ int main(void)
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
 
-	// Exersize 3.1 — Using Timer Interrupts:
-
-
+	
+	
+	
+	// START: Exersize 3.1 — Using Timer Interrupts:
 
 		//Enable the timer 2 peripheral (TIM2) in the RCC
    RCC->APB1ENR |= 0x1;  //Bit 0 TIM2EN: TIM2 timer clock enable
@@ -234,15 +235,83 @@ int main(void)
 		
 		GPIOC->ODR |= 0x100; //Set the orange ON
 	 
-	 // Exersize 3.2 — Configuring Timer Channels to PWM Mode.
+	 // END: Exersize 3.1 — Using Timer Interrupts:
 	 
-	 //Enable the timer 3 peripheral (TIM3) in the RCC.
+	 // START: Exersize 3.2 — Configuring Timer Channels to PWM Mode.
+	 
+	 //1. Enable the timer 3 peripheral (TIM3) in the RCC.
 	  RCC->APB1ENR |= 0x2;  //Bit 1 TIM3EN: TIM3 timer clock enable
 	 
-	 //The timer’s update period determines the period of the PWM signal; 
+	 //2. The timer’s update period determines the period of the PWM signal; 
 	 //configure the timer to a UEV period related to 800 Hz (T = 1/f).
 	 // T = 0.00125
 	 
+	 //Configure the timer to trigger an update event:
+	 //The default processor frequency of the STM32F072 is 8 MHz
+	 //a 16-bit timer can only count up to 65535. 
+	 //If your target ARR is outside of that range, 
+	 //you’ll need to adjust the prescaler (change units) to scale the ARR appropriately.
+	 
+	 //PSC = fCLK/(ARR * fTARGET) -1.
+	 // fCLK=8MHz; fTARGET = 800Hz. 1/800 =0.00125sec= 1.25 ms.
+	 //Set ARR = 1.25 (only 8 bits); PSC = 8MHz/(1.25 * 800Hz) -1 =7999 (occupies 13 bit only out of 16 bit).
+		 TIM3->PSC = 79; //0x1F3F; //79
+		 TIM3->ARR = 125;//0xFA;   //800Hz
+
+	// 3. Use the Capture/Compare Mode Register 1 (CCMR1) 
+	// register to configure the output channels to PWM mode
+	
+	//(a) The CCMR1 register configures channels 1 & 2, 
+	//and the CCMR2 register for channels 3 & 4. 
+	//(b) Examine the bit definitions for the CC1S[1:0] 
+	//and CC2S[1:0] bit fields; ensure that you set the channels to output.
+	
+		 TIM3->CCMR1 &=0xFCFC; // Bits 1:0 CC1S: Capture/Compare 1 selection. Bits 9:8 CC2S: Capture/compare 2 selection
+		
+	//(c) Examine the bit definitions for the OC1M[2:0] bit field; set output channel 1 to PWM Mode 2.		
+	// Bits 6:4 OC1M: Output compare 1 mode 
+	// 111: PWM mode 2 - In upcounting, channel 1 is inactive as long as TIMx_CNT<TIMx_CCR1 
+	//else active. In downcounting, channel 1 is active as long as TIMx_CNT>TIMx_CCR1 else inactive.
+	
+	   TIM3->CCMR1 |=0x70;
+		 // (d) Use the OC2M[2:0] bit field to set channel 2 to PWM Mode 1.
+		 TIM3->CCMR1 = (0x7000 & 0xEFFF);
+		 
+		 // (e) Enable the output compare preload for both channels.
+		 
+		  TIM3->CCMR1 |=0x8; // Bit 3 OC1PE: Output compare 1 preload enable
+			TIM3->CCMR1 |=0x800; // Bit 11 OC2PE: Output compare 2 preload enable
+			
+			//4. Set the output enable bits for channels 1 & 2 in the CCER register.
+				
+			TIM3->CCER |=0x1;   //Bit 0 CC1E: Capture/Compare 1 output enable.
+			TIM3->CCER |=0x10;  // Bit 4 CC2E: Capture/Compare 2 output enable.
+			
+			//5. Set the capture/compare registers (CCRx) for both channels to 20% of your ARR value.
+			TIM3->CCR1 =0x32; //ARR=250 x 0.2 = 50.
+			TIM3->CCR2 =25; //ARR=125 x 0.2 = 25.
+			
+			// 3.3 — Configuring Pin Alternate Functions
+			//1. Look up the alternate functions of the red (PC6) and blue (PC7) LEDs
+			GPIOC->MODER &= 0x0; //red (PC6)
+			GPIOC->MODER |= 0xA000; //red (PC6); // 10: Alternate function mode
+			
+			//red (PC7); // 10: Alternate function mode
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+	
+	
+	
+	
+	
 	
 
   /* USER CODE END 2 */
