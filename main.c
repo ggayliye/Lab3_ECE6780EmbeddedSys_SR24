@@ -143,72 +143,72 @@ void TIM2_IRQHandler(void) {
 	
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
+		/* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
+		/* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+		/* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+		/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+		HAL_Init();
 
-  /* USER CODE BEGIN Init */
+		/* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+		/* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+		/* Configure the system clock */
+		SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
+		/* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
+		/* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  /* USER CODE BEGIN 2 */
+		/* Initialize all configured peripherals */
+		/* USER CODE BEGIN 2 */
 
-	
-	
-	
-	// START: Exersize 3.1 — Using Timer Interrupts:
+
+
+
+		// START: Exersize 3.1 — Using Timer Interrupts:
 
 		//Enable the timer 2 peripheral (TIM2) in the RCC
-   RCC->APB1ENR |= 0x1;  //Bit 0 TIM2EN: TIM2 timer clock enable
-	
-//	RCC->APB2ENR |=0x800; 
-	 
-	 //Configure the timer to trigger an update event:
-	 //The default processor frequency of the STM32F072 is 8 MHz
-	 //a 16-bit timer can only count up to 65535. 
-	 //If your target ARR is outside of that range, 
-	 //you’ll need to adjust the prescaler (change units) to scale the ARR appropriately.
-	 
-	 //PSC = fCLK/(ARR * fTARGET) -1.
-	 // fCLK=8MHz; fTARGET = 4Hz. 1/4 =0.25sec=250 ms.
-	 //Set ARR = 250 (only 8 bits); PSC = 8MHz/(250 * 4Hz) -1 =7999 (occupies 13 bit only out of 16 bit).
-		 TIM2->PSC = 7999; //0x1F3F; //7999
-		 TIM2->ARR = 250;//0xFA;   //250
-	 
-	 //Configure the timer to generate an interrupt on the UEV event (Update Event).
-	 //Use the DMA/Interrupt Enable Register (DIER) to enable the Update Interrupt:
-		 TIM2->DIER |= 0x1; //Bit 0 UIE: Update interrupt enable
+		RCC->APB1ENR |= 0x1;  //Bit 0 TIM2EN: TIM2 timer clock enable
+
+		//	RCC->APB2ENR |=0x800; 
+
+		//Configure the timer to trigger an update event:
+		//The default processor frequency of the STM32F072 is 8 MHz
+		//a 16-bit timer can only count up to 65535. 
+		//If your target ARR is outside of that range, 
+		//you’ll need to adjust the prescaler (change units) to scale the ARR appropriately.
+
+		//PSC = fCLK/(ARR * fTARGET) -1.
+		// fCLK=8MHz; fTARGET = 4Hz. 1/4 =0.25sec=250 ms.
+		//Set ARR = 250 (only 8 bits); PSC = 8MHz/(250 * 4Hz) -1 =7999 (occupies 13 bit only out of 16 bit).
+		TIM2->PSC = 7999; //0x1F3F; //7999
+		TIM2->ARR = 250;//0xFA;   //250
+
+		//Configure the timer to generate an interrupt on the UEV event (Update Event).
+		//Use the DMA/Interrupt Enable Register (DIER) to enable the Update Interrupt:
+		TIM2->DIER |= 0x1; //Bit 0 UIE: Update interrupt enable
 		// TIM2->DIER |= TIM_DIER_UIE; //
-	 //egr, rcr, CR1 (have that) feedback
-	 //Configure and enable/start the timer
-	 //Although the RCC enabled the timer’s clock source, 
-	 //the timer has its own enable/start bit in the control registers
-	 
-	   TIM2->CR1 |= 0x1; //Bit 0 CEN: Counter enable
-	 
-	 //Set up the timer’s interrupt handler, and enable in the NVIC.
-	 
-			NVIC_EnableIRQ(TIM2_IRQn); // In the stm32f072xb.h file.
-	 
-	    NVIC_SetPriority(TIM2_IRQn,1);// Set the priority for the interrupt to 1 (high-priority). 
-		
-	 
-	 // Toggle between the green (PC8) and orange (PC9) LEDs in the interrupt handler
-	 
-	 		//Initializing all of the LED pins
+		//egr, rcr, CR1 (have that) feedback
+		//Configure and enable/start the timer
+		//Although the RCC enabled the timer’s clock source, 
+		//the timer has its own enable/start bit in the control registers
+
+		TIM2->CR1 |= 0x1; //Bit 0 CEN: Counter enable
+
+		//Set up the timer’s interrupt handler, and enable in the NVIC.
+
+		NVIC_EnableIRQ(TIM2_IRQn); // In the stm32f072xb.h file.
+
+		NVIC_SetPriority(TIM2_IRQn,1);// Set the priority for the interrupt to 1 (high-priority). 
+
+
+		// Toggle between the green (PC8) and orange (PC9) LEDs in the interrupt handler
+
+		//Initializing all of the LED pins
 
 		RCC->AHBENR |= 0x80000; //For C port (LED ports), "Bit 19 IOPCEN: I/O port C clock enable". 19th bit position. 
 		// We know 19th bit from data sheet RM0091 on page 122.
@@ -216,114 +216,172 @@ int main(void)
 		// PC7 is connected to BLUE LED.
 		// PC8 is connected to ORANGE LED.
 		// PC9 is connected to GREEN LED.
-	 
+
 		//Enable ALL LEDs for "General purpose output mode, "01" as bits"
-		GPIOC->MODER |= (85<<12); // This means: Move Right to left as 12 digits (the digits are in bits).
+		//	GPIOC->MODER |= (85<<12); // This means: Move Right to left as 12 digits (the digits are in bits).
+
 		//then start adjusting from right to left converting 85 to binary and applying OR "|".
 		// 85 in binary will be 01 01 01 01.
+				
+		GPIOC->MODER &= 0xFFF0FFFF; //reset pins 8 through 9.
+		GPIOC->MODER |= 0x50000; //set PC8 and PC9 to "01:General purpose output mode"
+		
+	//	GPIOC->MODER |= 0x5A000; //set PC8 and PC9 to "01:General purpose output mode"
+		// PC6 and PC7, set 10: Alternate function mode
 
 		GPIOC->OTYPER &= 0x0; //no OR (|) . GPIO port output type register
 
 		GPIOC->OSPEEDR &= 0x0; //GPIO port output speed register to Low speed
 
 		GPIOC->PUPDR &= 0x0; //GPIO port pull-up/pull-down register
-		
-		//Don’t forget to clear the pending flag for the update interrupt in the status register:
-	 
-		//TIM1->SR |= 0x1;  //Bit 0 UIF: Update interrupt flag
-		
-		
-		GPIOC->ODR |= 0x100; //Set the orange ON
-	 
-	 // END: Exersize 3.1 — Using Timer Interrupts:
-	 
-	
-	// START: Exersize 3.2 — Configuring Timer Channels to PWM Mode.
-	 
-	 //1. Enable the timer 3 peripheral (TIM3) in the RCC.
-	  RCC->APB1ENR |= 0x2;  //Bit 1 TIM3EN: TIM3 timer clock enable
-	 
-	 //2. The timer’s update period determines the period of the PWM signal; 
-	 //configure the timer to a UEV period related to 800 Hz (T = 1/f).
-	 // T = 0.00125
-	 
-	 //Configure the timer to trigger an update event:
-	 //The default processor frequency of the STM32F072 is 8 MHz
-	 //a 16-bit timer can only count up to 65535. 
-	 //If your target ARR is outside of that range, 
-	 //you’ll need to adjust the prescaler (change units) to scale the ARR appropriately.
-	 
-	 //PSC = fCLK/(ARR * fTARGET) -1.
-	 // fCLK=8MHz; fTARGET = 800Hz. 1/800 =0.00125sec= 1.25 ms.
-	 //Set ARR = 1.25 (only 8 bits); PSC = 8MHz/(1.25 * 800Hz) -1 =7999 (occupies 13 bit only out of 16 bit).
-		 TIM3->PSC = 1999; //0x1F3F; //79
-		 TIM3->ARR = 5;//0xFA;   //800Hz
 
-	// 3. Use the Capture/Compare Mode Register 1 (CCMR1) 
-	// register to configure the output channels to PWM mode
-	
-	//(a) The CCMR1 register configures channels 1 & 2, 
-	//and the CCMR2 register for channels 3 & 4. 
-	//(b) Examine the bit definitions for the CC1S[1:0] 
-	//and CC2S[1:0] bit fields; ensure that you set the channels to output.
-	
-		 TIM3->CCMR1 &=0xFCFC; // Bits 1:0 CC1S: Capture/Compare 1 selection. Bits 9:8 CC2S: Capture/compare 2 selection
+		//Don’t forget to clear the pending flag for the update interrupt in the status register:
+
+		//TIM1->SR |= 0x1;  //Bit 0 UIF: Update interrupt flag
+
+
+	  
+     
+	  //	GPIOC->ODR |= 0x100; //Set the orange ON;//Set the orange ON, PC8.
+		// END: Exersize 3.1 — Using Timer Interrupts:
+
+
+		// START: Exersize 3.2 — Configuring Timer Channels to PWM Mode.
+
+		//1. Enable the timer 3 peripheral (TIM3) in the RCC.
+		RCC->APB1ENR |= 0x2;  //Bit 1 TIM3EN: TIM3 timer clock enable
+
+		//2. The timer’s update period determines the period of the PWM signal; 
+		//configure the timer to a UEV period related to 800 Hz (T = 1/f).
+		// T = 0.00125
+
+		//Configure the timer to trigger an update event:
+		//The default processor frequency of the STM32F072 is 8 MHz
+		//a 16-bit timer can only count up to 65535. 
+		//If your target ARR is outside of that range, 
+		//you’ll need to adjust the prescaler (change units) to scale the ARR appropriately.
+
+		//PSC = fCLK/(ARR * fTARGET) -1.
+		// fCLK=8MHz; fTARGET = 800Hz. 1/800 =0.00125sec= 1.25 ms.
+		//Set ARR = 1.25 (only 8 bits); PSC = 8MHz/(1.25 * 800Hz) -1 =7999 (occupies 13 bit only out of 16 bit).
+		TIM3->PSC = 1999; //0x1F3F; //79
+		TIM3->ARR = 5;//0xFA; (1.25 originally)  //800Hz
 		
-	//(c) Examine the bit definitions for the OC1M[2:0] bit field; set output channel 1 to PWM Mode 2.		
-	// Bits 6:4 OC1M: Output compare 1 mode 
-	// 111: PWM mode 2 - In upcounting, channel 1 is inactive as long as TIMx_CNT<TIMx_CCR1 
-	//else active. In downcounting, channel 1 is active as long as TIMx_CNT>TIMx_CCR1 else inactive.
-	
-	   TIM3->CCMR1 |=0x70;
-		 // (d) Use the OC2M[2:0] bit field to set channel 2 to PWM Mode 1.
-		 TIM3->CCMR1 = (0x7000 & 0xEFFF);
-		 
-		 // (e) Enable the output compare preload for both channels.
-		 
-		  TIM3->CCMR1 |=0x8; // Bit 3 OC1PE: Output compare 1 preload enable
-			TIM3->CCMR1 |=0x800; // Bit 11 OC2PE: Output compare 2 preload enable
-			
-			//4. Set the output enable bits for channels 1 & 2 in the CCER register.
-				
-			TIM3->CCER |=0x1;   //Bit 0 CC1E: Capture/Compare 1 output enable.
-			TIM3->CCER |=0x10;  // Bit 4 CC2E: Capture/Compare 2 output enable.
-			
-			//5. Set the capture/compare registers (CCRx) for both channels to 20% of your ARR value.
-			TIM3->CCR1 =0x32; //ARR=250 x 0.2 = 50.
-			TIM3->CCR2 =1; //ARR=5 x 0.2 = 1.
-			
-			
-			// 3.3 — Configuring Pin Alternate Functions
-			//1. Look up the alternate functions of the red (PC6) and blue (PC7) LEDs
-			// Look at the table in "STM32F072x8 STM32F072xB" datasheet, page 46.
-			// AF0=> PC6: TIM3_CH1; PC7: TIM3_CH2
-			GPIOC->MODER &= 0xFFFF0FFF; // make PC7 and PC6 zero
-			GPIOC->MODER |= 0xA000; //10: Alternate function mode. 
-			//GPIOC->MODER |= 0xA000;
-			//made moder6 and moder7 "0" first and multiply that 
-			//by appropriate binary so we can activatered (PC6)& (PC7).
+	//	TIM2->DIER |= 0x1; //Bit 0 UIE: Update interrupt enable
 		
-		  //[only red is on right now since "3.3 — Configuring Pin Alternate Functions"]
+    //TIM3->ARR = (125/100);//0xFA; (1.25 originally)  //800Hz
+		// 3. Use the Capture/Compare Mode Register 1 (CCMR1) 
+		// register to configure the output channels to PWM mode
+
+		//(a) The CCMR1 register configures channels 1 & 2, 
+		//and the CCMR2 register for channels 3 & 4. 
+		//(b) Examine the bit definitions for the CC1S[1:0] 
+		//and CC2S[1:0] bit fields; ensure that you set the channels to output.
+
+		TIM3->CCMR1 &=0xFCFC; // Bits 1:0 CC1S: Capture/Compare 1 selection. Bits 9:8 CC2S: Capture/compare 2 selection
+		//00: CC1 & CC2 channel is configured as output.
+
+		//(c) Examine the bit definitions for the OC1M[2:0] bit field; set output channel 1 to PWM Mode 2.		
+		// Bits 6:4 OC1M: Output compare 1 mode 
+		// 111: PWM mode 2 - In upcounting, channel 1 is inactive as long as TIMx_CNT<TIMx_CCR1 
+		//else active. In downcounting, channel 1 is active as long as TIMx_CNT>TIMx_CCR1 else inactive.
+
+	//	TIM3->CCMR1 |=0x70; // Binary Val:0000000001110000. 
+		
+		
+		// (d) Use the OC2M[2:0] bit field to set channel 2 to PWM Mode 1.
+		// TIM3->CCMR1 = (0x7000 & 0xEFFF); //Bits 14:12 OC2M[2:0]:
+		
+	//	TIM3->CCMR1 = ((TIM3->CCMR1 & 0x8FFF) | 0x6000);
+	// c) & d):
+		TIM3->CCMR1 |=0x7070;
+		TIM3->CCMR1 &=0xEFFF;
+		
+		
+		// (e) Enable the output compare preload for both channels.
+
+		// TIM3->CCMR1 |=0x8; // Bit 3 OC1PE: Output compare 1 preload enable
+		//	TIM3->CCMR1 |=0x800; // Bit 11 OC2PE: Output compare 2 preload enable
+
+		 TIM3->CCMR1 |=0x808;
+		//1: Preload register on TIMx_CCR1 enabled.
+
+		//4. Set the output enable bits for channels 1 & 2 in the CCER register.
 			
-			//TIM2 and TIM3 control register 2 (TIM2_CR2 and TIM3_CR2)
-			//0: The TIMx_CH1 pin is connected to TI1 input . 
-			//1: The TIMx_CH1, CH2 and CH3 pins are connected to the TI1 input (XOR combination)
-			// TI1S is 7th bit.
+		//TIM3->CCER |=0x1;   //Bit 0 CC1E: Capture/Compare 1 output enable.
+		//TIM3->CCER |=0x10;  // Bit 4 CC2E: Capture/Compare 2 output enable.
+
+		 TIM3->CCER |=0x11; 
+		 
+		//5. Set the capture/compare registers (CCRx) for both channels to 20% of your ARR value.
+		TIM3->CCR1 =0x32; //ARR=250 x 0.2 = 50.
+		TIM3->CCR2 =0x1; //ARR=5 x 0.2 = 1.
+		
+		//TIM3->CCR2 =(25/100); //ARR=5 x 0.2 = 1.
+		
+     // NVIC_EnableIRQ(TIM3_IRQn); // In the stm32f072xb.h file.
+
+		// 3.3 — Configuring Pin Alternate Functions
+		//1. Look up the alternate functions of the red (PC6) and blue (PC7) LEDs
+
+		// Look at the table in "STM32F072x8 STM32F072xB" datasheet, page 46.
+		// AF0=> PC6: TIM3_CH1; PC7: TIM3_CH2
+
+
+    GPIOC->MODER &= 0xFFFF0FFF; // make PC7 and PC6 zero. Binary: 11111111111111110000111111111111
+		GPIOC->MODER |= 0xA000; //10: Alternate function mode. Binary: 00000000000000001010000000000000
+		//GPIOC->MODER |= 0xA000;
+		//made moder6 and moder7 "0" first and multiply that 
+		//by appropriate binary so we can activatered (PC6)& (PC7).
+    // PC6 and PC7, set 10: Alternate function mode
+		//[only red is on right now since "3.3 — Configuring Pin Alternate Functions"]
+
+
+//		GPIOC->OTYPER &= 0x0; //no OR (|) . GPIO port output type register
+
+//		GPIOC->OSPEEDR &= 0x0; //GPIO port output speed register to Low speed
+
+//		GPIOC->PUPDR &= 0x0; //GPIO port pull-up/pull-down register
+
+		//Don’t forget to clear the pending flag for the update interrupt in the status register:
+
+		//TIM1->SR |= 0x1;  //Bit 0 UIF: Update interrupt flag
+
+
+	//	GPIOC->ODR |= 0x100; //Set the orange ON
+
+
+
+//      GPIOC->ODR &= 0xFF3F; //reset red and blue
+//			 
+//			GPIOC->BSRR |= 0xC0; //reset red and blue
+
+
+		//TIM2 and TIM3 control register 2 (TIM2_CR2 and TIM3_CR2)
+		//0: The TIMx_CH1 pin is connected to TI1 input . 
+		//1: The TIMx_CH1, CH2 and CH3 pins are connected to the TI1 input (XOR combination)
+		// TI1S is 7th bit.
 		//	__IO uint32_t AFR[2]
-		
+
 		//From the 
-			 GPIOC->AFR[0] |= (0x0 << GPIO_AFRL_AFRL6_Pos) |(0x0 << GPIO_AFRL_AFRL7_Pos); 
-  		// GPIOC->AFR[0] |= (0x0 << GPIO_AFRL_AFRL6_Pos) ; 
-			// GPIOC->AFR[1] |= (0x0 << GPIO_AFRL_AFRL7_Pos); 
-			 
-			 
-			//GPIOC->AFR[0] |= (0x0 << GPIO_AFRL_AFRL6_Pos) | (0x0 << GPIO_AFRL_AFRL7_Pos); 
-			// IN binary:00000000111111111111111111111111 for AF0 and PC6& PC7.
-			// GPIOC->AFR[0] &= 0xFFFFFF; // IN binary:00000000111111111111111111111111 for AF0 and PC6& PC7. 
-			//Located in  AFRL not in AFRH
-			
+		//	 GPIOC->AFR[0] |= (0x0 << GPIO_AFRL_AFRL6_Pos) |(0x0 << GPIO_AFRL_AFRL7_Pos); 
+	 // GPIOC->ODR |= 0x80; //blue is on, PC7
+		
+		GPIOC->AFR[0] &= 0xFFFFFF ; //Binary:00000000111111111111111111111111
+	//	TIM3->SR &= ~TIM_SR_UIF;
+			 //AFR[0] means AFRL because there is L and H. H is AFR[1].
+
+		// GPIOC->AFR[0] |= (0x0 << GPIO_AFRL_AFRL6_Pos) ; 
+		// GPIOC->AFR[1] |= (0x0 << GPIO_AFRL_AFRL7_Pos); 
+		 
+		 
+		//GPIOC->AFR[0] |= (0x0 << GPIO_AFRL_AFRL6_Pos) | (0x0 << GPIO_AFRL_AFRL7_Pos); 
+		// IN binary:00000000111111111111111111111111 for AF0 and PC6& PC7.
+		// GPIOC->AFR[0] &= 0xFFFFFF; // IN binary:00000000111111111111111111111111 for AF0 and PC6& PC7. 
+		//Located in  AFRL not in AFRH
+
 		//	3.4 — Measuring PWM Output.
-			
+
 			
 			
 			
