@@ -237,7 +237,8 @@ int main(void)
 	 
 	 // END: Exersize 3.1 — Using Timer Interrupts:
 	 
-	 // START: Exersize 3.2 — Configuring Timer Channels to PWM Mode.
+	
+	// START: Exersize 3.2 — Configuring Timer Channels to PWM Mode.
 	 
 	 //1. Enable the timer 3 peripheral (TIM3) in the RCC.
 	  RCC->APB1ENR |= 0x2;  //Bit 1 TIM3EN: TIM3 timer clock enable
@@ -255,8 +256,8 @@ int main(void)
 	 //PSC = fCLK/(ARR * fTARGET) -1.
 	 // fCLK=8MHz; fTARGET = 800Hz. 1/800 =0.00125sec= 1.25 ms.
 	 //Set ARR = 1.25 (only 8 bits); PSC = 8MHz/(1.25 * 800Hz) -1 =7999 (occupies 13 bit only out of 16 bit).
-		 TIM3->PSC = 79; //0x1F3F; //79
-		 TIM3->ARR = 125;//0xFA;   //800Hz
+		 TIM3->PSC = 1999; //0x1F3F; //79
+		 TIM3->ARR = 5;//0xFA;   //800Hz
 
 	// 3. Use the Capture/Compare Mode Register 1 (CCMR1) 
 	// register to configure the output channels to PWM mode
@@ -289,14 +290,59 @@ int main(void)
 			
 			//5. Set the capture/compare registers (CCRx) for both channels to 20% of your ARR value.
 			TIM3->CCR1 =0x32; //ARR=250 x 0.2 = 50.
-			TIM3->CCR2 =25; //ARR=125 x 0.2 = 25.
+			TIM3->CCR2 =1; //ARR=5 x 0.2 = 1.
+			
 			
 			// 3.3 — Configuring Pin Alternate Functions
 			//1. Look up the alternate functions of the red (PC6) and blue (PC7) LEDs
-			GPIOC->MODER &= 0x0; //red (PC6)
-			GPIOC->MODER |= 0xA000; //red (PC6); // 10: Alternate function mode
+			// Look at the table in "STM32F072x8 STM32F072xB" datasheet, page 46.
+			// AF0=> PC6: TIM3_CH1; PC7: TIM3_CH2
+			GPIOC->MODER &= 0xFFFF0FFF; // make PC7 and PC6 zero
+			GPIOC->MODER |= 0xA000; //10: Alternate function mode. 
+			//GPIOC->MODER |= 0xA000;
+			//made moder6 and moder7 "0" first and multiply that 
+			//by appropriate binary so we can activatered (PC6)& (PC7).
+		
+		  //[only red is on right now since "3.3 — Configuring Pin Alternate Functions"]
 			
-			//red (PC7); // 10: Alternate function mode
+			//TIM2 and TIM3 control register 2 (TIM2_CR2 and TIM3_CR2)
+			//0: The TIMx_CH1 pin is connected to TI1 input . 
+			//1: The TIMx_CH1, CH2 and CH3 pins are connected to the TI1 input (XOR combination)
+			// TI1S is 7th bit.
+		//	__IO uint32_t AFR[2]
+		
+		//From the 
+			 GPIOC->AFR[0] |= (0x0 << GPIO_AFRL_AFRL6_Pos) |(0x0 << GPIO_AFRL_AFRL7_Pos); 
+  		// GPIOC->AFR[0] |= (0x0 << GPIO_AFRL_AFRL6_Pos) ; 
+			// GPIOC->AFR[1] |= (0x0 << GPIO_AFRL_AFRL7_Pos); 
+			 
+			 
+			//GPIOC->AFR[0] |= (0x0 << GPIO_AFRL_AFRL6_Pos) | (0x0 << GPIO_AFRL_AFRL7_Pos); 
+			// IN binary:00000000111111111111111111111111 for AF0 and PC6& PC7.
+			// GPIOC->AFR[0] &= 0xFFFFFF; // IN binary:00000000111111111111111111111111 for AF0 and PC6& PC7. 
+			//Located in  AFRL not in AFRH
+			
+		//	3.4 — Measuring PWM Output.
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			
 			
