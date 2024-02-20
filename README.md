@@ -71,7 +71,9 @@ their work individually.
 - Created the "Lab3_ECE6780EmbeddedSys_SR24" GitHub repo.
 - Created the "lab03" project using STM32CubeMX Software
 - Worked on the 1st Part of the lab. 
-- 
+- First and the second parts were finished by the weekend. However,
+in the second part, the LEDs didn't performancedim and brightness
+switch. It took longer time to fix this issue.
 
 
 ## Testing
@@ -80,11 +82,18 @@ are performed in each step to ensure code improvements. Check "Testing Instructi
 section below.
 
 # Time Expenditures:
-<pre>Lab03: Predicted Hours: 12h		Actual Hours:	h		 </pre>
+<pre>Lab03: Predicted Hours: 12h		Actual Hours:	10h		 </pre>
 
 The actual hours recorded on top reflect the time spent for the assignment including the time spent in labs. It excludes time spent reading and understanding the lab assignment instructions at the beginning of the lab (pre-lab work).
 
 # Comments to Evaluators:
+
+Compared to the other labs, I am uploading
+the full project files in this repo. Therfore,
+you may not need some of the information below to
+prepaire this project to run. However, I'm still
+including those parts below.
+
 
 <em>To able to fully test the main.c, other files and tools are required.<br>
 For example, I created the project using the STM32CubeMX software first. Then <br>
@@ -139,9 +148,8 @@ N/A
 
 # Caution/Warnings
 
-* Never use any sort of delay within an interrupt handler! Handler functions should perform<br>
-work quickly and then return—the HAL delay functions will deadlock within an interrupt with <br>
-the same or higher priority than the SysTick. 
+* 16-bit timer can only count up to 65535. If your target ARR is outside of that range, 
+you’ll need to adjust the prescaler (change units) to scale the ARR appropriately.. 
 
 
 # Examples of Good Software Practice (GSP)
