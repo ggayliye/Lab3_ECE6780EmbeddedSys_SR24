@@ -74,6 +74,11 @@ their work individually.
 - First and the second parts were finished by the weekend. However,
 in the second part, the LEDs didn't performancedim and brightness
 switch. It took longer time to fix this issue.
+- The "problem" was that the LEDs were not supposed to "dim" and "brighten"
+in a way that a human eyes can see. They blick, but found out that our
+eyes couldn't catch them.
+- Also, I forgot to set TIM3->CR1 register. Then everything worked out.
+- Finishing it one whole day before the due date.
 
 
 ## Testing
@@ -82,7 +87,7 @@ are performed in each step to ensure code improvements. Check "Testing Instructi
 section below.
 
 # Time Expenditures:
-<pre>Lab03: Predicted Hours: 12h		Actual Hours:	10h		 </pre>
+<pre>Lab03: Predicted Hours: 12h		Actual Hours:	14h		 </pre>
 
 The actual hours recorded on top reflect the time spent for the assignment including the time spent in labs. It excludes time spent reading and understanding the lab assignment instructions at the beginning of the lab (pre-lab work).
 
