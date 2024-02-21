@@ -1,0 +1,25 @@
+--cpu Cortex-M0
+"lab3_proj\startup_stm32f072xb.o"
+"lab3_proj\main.o"
+"lab3_proj\stm32f0xx_it.o"
+"lab3_proj\stm32f0xx_hal_msp.o"
+"lab3_proj\stm32f0xx_hal_tim.o"
+"lab3_proj\stm32f0xx_hal_tim_ex.o"
+"lab3_proj\stm32f0xx_hal_rcc.o"
+"lab3_proj\stm32f0xx_hal_rcc_ex.o"
+"lab3_proj\stm32f0xx_hal.o"
+"lab3_proj\stm32f0xx_hal_i2c.o"
+"lab3_proj\stm32f0xx_hal_i2c_ex.o"
+"lab3_proj\stm32f0xx_hal_gpio.o"
+"lab3_proj\stm32f0xx_hal_dma.o"
+"lab3_proj\stm32f0xx_hal_cortex.o"
+"lab3_proj\stm32f0xx_hal_pwr.o"
+"lab3_proj\stm32f0xx_hal_pwr_ex.o"
+"lab3_proj\stm32f0xx_hal_flash.o"
+"lab3_proj\stm32f0xx_hal_flash_ex.o"
+"lab3_proj\stm32f0xx_hal_exti.o"
+"lab3_proj\system_stm32f0xx.o"
+--strict --scatter "lab3_proj\lab3_proj.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "lab3_proj.map" -o lab3_proj\lab3_proj.axf
